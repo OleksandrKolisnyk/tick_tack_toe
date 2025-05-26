@@ -3,8 +3,7 @@ package com.javarush.games.ticktacktoe;
 import com.javarush.engine.cell.*;
 
 public class TicTacToeGame extends Game {
-    private static final int fieldSizeX = 3;
-    private static final int fieldSizeY = 3;
+    private static final int fieldSize = 3;
 
     private static final String symbolSpace = " ";
     private static final String symbolX = "X";
@@ -14,20 +13,23 @@ public class TicTacToeGame extends Game {
     private static final Color symbolColorX = Color.RED;
     private static final Color symbolColor0 = Color.BLUE;
 
+    private static final int msgTextSize = 45;
+    private static final Key restartGameKey = Key.ESCAPE;
+    private static final Key restartGameKeyIfGameStoped = Key.SPACE;
 
-    private int[][] model = new int[fieldSizeX][fieldSizeY];
+    private int[][] model = new int[fieldSize][fieldSize];
     private int currentPlayer;
     private boolean isGameStopped;
 
     public void initialize(){
-        setScreenSize(fieldSizeX, fieldSizeY);
+        setScreenSize(fieldSize, fieldSize);
         startGame();
         updateView();
     }
 
     public void startGame() {
-        for (int x = 0; x < fieldSizeX; x++) {
-            for (int y = 0; y < fieldSizeY; y++) {
+        for (int x = 0; x < fieldSize; x++) {
+            for (int y = 0; y < fieldSize; y++) {
                 model[x][y] = 0;
             }
         }
@@ -55,39 +57,72 @@ public class TicTacToeGame extends Game {
     }
 
     public void updateView() {
-        for (int x = 0; x < fieldSizeX; x++) {
-            for (int y = 0; y < fieldSizeY; y++) {
+        for (int x = 0; x < fieldSize; x++) {
+            for (int y = 0; y < fieldSize; y++) {
                 updateCellView(x, y, model[x][y]);
             }
         }
     }
 
     public void onMouseLeftClick(int x, int y) {
+        setSignAndCheck(x, y);
+    }
+
+    public void setSignAndCheck(int x, int y) {
         if (isGameStopped || model[x][y] != 0) {
-          return;
+            return;
         }
+
         model[x][y] = currentPlayer;
         updateView();
+
+        if (checkWin(x, y, currentPlayer)) {
+            isGameStopped = true;
+            Color symbolColor = (currentPlayer == 1) ? symbolColorX : symbolColor0;
+            showMessageDialog(Color.NONE, " Player #" + currentPlayer + " win!",
+                    symbolColor, msgTextSize);
+            return;
+        }
+
+        if (!hasEmptyCell()) {
+            isGameStopped = true;
+            showMessageDialog(Color.NONE, " Draw!",  Color.BLUE, msgTextSize);
+            return;
+        }
+
         currentPlayer = 3 - currentPlayer;
     }
 
     public boolean checkWin(int x, int y, int n) {
         boolean winX = true;
-        for (int xi = 0; xi < fieldSizeX; xi++) {
-            winX = winX && (model[x][y] == model[xi][y]);
-        }
-        if (winX ) {
-          return true;
-        }
-
         boolean winY = true;
-        for (int yi = 0; yi < fieldSizeY; yi++) {
-            winY = winY && (model[x][y] == model[x][yi]);
-        }
-        if (winY ) {
-            return true;
-        }
+        boolean winMainDiagonal = true;
+        boolean winSecondaryDiagonal = true;
 
+        for (int i = 0; i < fieldSize; i++) {
+            winX = winX && (model[i][y] == n);
+            winY = winY && (model[x][i] == n);
+            winMainDiagonal = winMainDiagonal && (model[i][i] == n);
+            winSecondaryDiagonal = winSecondaryDiagonal && (model[i][fieldSize - i - 1] == n);
+        }
+        return (winX || winY || winMainDiagonal || winSecondaryDiagonal) ;
+    }
+
+    public boolean hasEmptyCell()  {
+        for (int x = 0; x < fieldSize; x++) {
+            for (int y = 0; y < fieldSize; y++) {
+                if (model[x][y] == 0) {
+                    return true;
+                };
+            }
+        }
         return false;
+    }
+
+    public void onKeyPress(Key key) {
+        if ((key == restartGameKey) || (isGameStopped && (key == restartGameKeyIfGameStoped))) {
+            startGame();
+            updateView();
+        }
     }
 }
