@@ -194,28 +194,32 @@ public class TicTacToeGame extends Game {
         if (model[x][y] != 0) {
             return false;
         }
+        model[x][y] = n;
+        boolean futureWin = checkWin(x, y, n);
+        model[x][y] = 0;
+        return  futureWin;
 
-        boolean winX = true;
-        boolean winY = true;
-        boolean winMainDiagonal = (x == y) ? true : false;
-        boolean winSecondaryDiagonal = (x == (fieldSize - y - 1)) ? true : false;
-
-        for (int i = 0; i < fieldSize; i++) {
-            if (i != x) {
-                winX = winX && (model[i][y] == n) ;
-            }
-            if (i != y) {
-                winY = winY && (model[x][i] == n);
-            }
-            // checking fields on main diagonal
-            if (winMainDiagonal && (i != x)) {
-                winMainDiagonal = winMainDiagonal && (model[i][i] == n);
-            }
-            // checking fields on Secondary diagonal
-            if (winSecondaryDiagonal && (i != x)) {
-                winSecondaryDiagonal = winSecondaryDiagonal && (model[i][fieldSize - i - 1] == n);
-            }
-        }
-        return (winX || winY || winMainDiagonal || winSecondaryDiagonal) ;
+//        boolean winX = true;
+//        boolean winY = true;
+//        boolean winMainDiagonal = (x == y) ? true : false;
+//        boolean winSecondaryDiagonal = (x == (fieldSize - y - 1)) ? true : false;
+//
+//        for (int i = 0; i < fieldSize; i++) {
+//            if (i != x) {
+//                winX = winX && (model[i][y] == n) ;
+//            }
+//            if (i != y) {
+//                winY = winY && (model[x][i] == n);
+//            }
+//            // checking fields on main diagonal
+//            if (winMainDiagonal && (i != x)) {
+//                winMainDiagonal = winMainDiagonal && (model[i][i] == n);
+//            }
+//            // checking fields on Secondary diagonal
+//            if (winSecondaryDiagonal && (i != x)) {
+//                winSecondaryDiagonal = winSecondaryDiagonal && (model[i][fieldSize - i - 1] == n);
+//            }
+//        }
+//        return (winX || winY || winMainDiagonal || winSecondaryDiagonal) ;
     }
 }
