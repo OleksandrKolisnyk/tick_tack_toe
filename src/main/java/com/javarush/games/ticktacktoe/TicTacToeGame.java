@@ -12,6 +12,12 @@ public class TicTacToeGame extends Game {
     private static final Color symbolColorSpace = Color.WHITE;
     private static final Color symbolColorX = Color.RED;
     private static final Color symbolColor0 = Color.BLUE;
+    private static final Color symbolColorPlayer1Win = Color.GREEN;
+    private static final Color symbolColorPlayer1Loose = Color.RED;
+
+    private static final String player1winMessage = "You Win!";
+    private static final String player1looseMessage = "Game Over";
+
 
     private static final int msgTextSize = 45;
     private static final Key restartGameKey = Key.ESCAPE;
@@ -65,22 +71,32 @@ public class TicTacToeGame extends Game {
     }
 
     public void onMouseLeftClick(int x, int y) {
-        setSignAndCheck(x, y);
-    }
-
-    public void setSignAndCheck(int x, int y) {
         if (isGameStopped || model[x][y] != 0) {
             return;
         }
+        setSignAndCheck(x, y);
+        currentPlayer = 3 - currentPlayer;
 
+        computerTurn();
+        currentPlayer = 3 - currentPlayer;
+    }
+
+    public void setSignAndCheck(int x, int y) {
         model[x][y] = currentPlayer;
         updateView();
 
         if (checkWin(x, y, currentPlayer)) {
             isGameStopped = true;
-            Color symbolColor = (currentPlayer == 1) ? symbolColorX : symbolColor0;
-            showMessageDialog(Color.NONE, " Player #" + currentPlayer + " win!",
-                    symbolColor, msgTextSize);
+//            Color symbolColor = (currentPlayer == 1) ? symbolColorX : symbolColor0;
+//            showMessageDialog(Color.NONE, " Player #" + currentPlayer + " win!",
+//                    symbolColor, msgTextSize);
+            if (currentPlayer == 1) {
+                showMessageDialog(Color.NONE, player1winMessage, symbolColorPlayer1Win,
+                        msgTextSize);
+            } else {
+                showMessageDialog(Color.NONE, player1looseMessage, symbolColorPlayer1Loose,
+                        msgTextSize);
+            }
             return;
         }
 
@@ -89,8 +105,6 @@ public class TicTacToeGame extends Game {
             showMessageDialog(Color.NONE, " Draw!",  Color.BLUE, msgTextSize);
             return;
         }
-
-        currentPlayer = 3 - currentPlayer;
     }
 
     public boolean checkWin(int x, int y, int n) {
@@ -124,5 +138,72 @@ public class TicTacToeGame extends Game {
             startGame();
             updateView();
         }
+    }
+
+    public void computerTurn() {
+        int centralField = fieldSize / 2;
+        if (model[centralField][centralField] == 0) {
+            setSignAndCheck(centralField, centralField);
+            return;
+        }
+
+        // check win currentPlayer for one turn
+        for (int xi = 0; xi < fieldSize; xi++) {
+            for (int yi = 0; yi < fieldSize; yi++) {
+                if (checkFutureWin(xi, yi, currentPlayer) ) {
+                    setSignAndCheck(xi, yi);
+                    return;
+                };
+            }
+        }
+
+        // check win other player for one turn and d't allow it
+        for (int xi = 0; xi < fieldSize; xi++) {
+            for (int yi = 0; yi < fieldSize; yi++) {
+                if (checkFutureWin(xi, yi, 3 - currentPlayer) ) {
+                    setSignAndCheck(xi, yi);
+                    return;
+                };
+            }
+        }
+
+        // turn in first free field
+        for (int xi = 0; xi < fieldSize; xi++) {
+            for (int yi = 0; yi < fieldSize; yi++) {
+                if (model[xi][yi] == 0) {
+                    setSignAndCheck(xi, yi);
+                    return;
+                };
+            }
+        }
+    }
+
+    public boolean checkFutureWin(int x, int y, int n) {
+        if (model[x][y] != 0) {
+            return false;
+        }
+
+        boolean winX = true;
+        boolean winY = true;
+        boolean winMainDiagonal = (x == y) ? true : false;
+        boolean winSecondaryDiagonal = (x == (fieldSize - y - 1)) ? true : false;
+
+        for (int i = 0; i < fieldSize; i++) {
+            if (i != x) {
+                winX = winX && (model[i][y] == n) ;
+            }
+            if (i != y) {
+                winY = winY && (model[x][i] == n);
+            }
+            // checking fields on main diagonal
+            if (winMainDiagonal && (i != x)) {
+                winMainDiagonal = winMainDiagonal && (model[i][i] == n);
+            }
+            // checking fields on Secondary diagonal
+            if (winSecondaryDiagonal && (i != x)) {
+                winSecondaryDiagonal = winSecondaryDiagonal && (model[i][fieldSize - i - 1] == n);
+            }
+        }
+        return (winX || winY || winMainDiagonal || winSecondaryDiagonal) ;
     }
 }
