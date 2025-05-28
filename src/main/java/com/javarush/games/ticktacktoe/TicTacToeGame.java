@@ -2,6 +2,10 @@ package com.javarush.games.ticktacktoe;
 
 import com.javarush.engine.cell.*;
 
+/** Game TickTackToe (X-0) on site javarush.com.
+https://javarush.com/ua/projects/games/com.javarush.games.ticktacktoe
+Use engine of this site. D't work w/o site.
+*/
 public class TicTacToeGame extends Game {
     private static final int fieldSize = 3;
 
@@ -75,9 +79,17 @@ public class TicTacToeGame extends Game {
             return;
         }
         setSignAndCheck(x, y);
+        if (isGameStopped) {
+            return;
+        }
+
         currentPlayer = 3 - currentPlayer;
 
         computerTurn();
+        if (isGameStopped) {
+            return;
+        }
+
         currentPlayer = 3 - currentPlayer;
     }
 
