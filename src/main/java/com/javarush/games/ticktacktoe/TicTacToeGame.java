@@ -2,44 +2,48 @@ package com.javarush.games.ticktacktoe;
 
 import com.javarush.engine.cell.*;
 
+import java.util.Random;
+
 /** Game TickTackToe (X-0) on site javarush.com.
 https://javarush.com/ua/projects/games/com.javarush.games.ticktacktoe
 Use engine of this site. D't work w/o site.
 */
 public class TicTacToeGame extends Game {
-    private static final int fieldSize = 3;
+    private static final int FIELD_SIZE = 3;
 
-    private static final String symbolSpace = " ";
-    private static final String symbolX = "X";
-    private static final String symbol0 = "O";
+    private static final String SYMBOL_SPACE = " ";
+    private static final String SYMBOL_X = "X";
+    private static final String SYMBOL_O = "O";
 
-    private static final Color symbolColorSpace = Color.WHITE;
-    private static final Color symbolColorX = Color.RED;
-    private static final Color symbolColor0 = Color.BLUE;
-    private static final Color symbolColorPlayer1Win = Color.GREEN;
-    private static final Color symbolColorPlayer1Loose = Color.RED;
+    private static final Color COLOR_SYMBOL_SPACE = Color.WHITE;
+    private static final Color COLOR_SYMBOL_X = Color.RED;
+    private static final Color COLOR_SYMBOL_O = Color.BLUE;
+    private static final Color COLOR_MSG_PLAYER_1_WIN = Color.GREEN;
+    private static final Color COLOR_MSG_PLAYER_1_LOOSE = Color.RED;
+    private static final Color COLOR_MSG_DROW = Color.BLUE;
+    private static final Color COLOR_MSG_BACKGROUND = Color.NONE;
 
-    private static final String player1winMessage = "You Win!";
-    private static final String player1looseMessage = "Game Over";
+    private static final String MESSAGE_PLAYER_1_WIN = "You Win!";
+    private static final String MESSAGE_PLAYER_1_LOOSE = "Game Over";
+    private static final String MESSAGE_DRAW = "Draw!";
 
+    private static final int MSG_TEXT_SIZE = 55;
+    private static final Key KEY_RESTART_GAME = Key.ESCAPE;
+    private static final Key KEY_RESTART_GAME_IF_GAME_STOPED = Key.SPACE;
 
-    private static final int msgTextSize = 45;
-    private static final Key restartGameKey = Key.ESCAPE;
-    private static final Key restartGameKeyIfGameStoped = Key.SPACE;
-
-    private int[][] model = new int[fieldSize][fieldSize];
+    private int[][] model = new int[FIELD_SIZE][FIELD_SIZE];
     private int currentPlayer;
     private boolean isGameStopped;
 
     public void initialize(){
-        setScreenSize(fieldSize, fieldSize);
+        setScreenSize(FIELD_SIZE, FIELD_SIZE);
         startGame();
         updateView();
     }
 
     public void startGame() {
-        for (int x = 0; x < fieldSize; x++) {
-            for (int y = 0; y < fieldSize; y++) {
+        for (int x = 0; x < FIELD_SIZE; x++) {
+            for (int y = 0; y < FIELD_SIZE; y++) {
                 model[x][y] = 0;
             }
         }
@@ -52,23 +56,23 @@ public class TicTacToeGame extends Game {
         Color symbolColor;
         switch (value) {
             case (1) :
-                symbolForPrint = symbolX;
-                symbolColor = symbolColorX;
+                symbolForPrint = SYMBOL_X;
+                symbolColor = COLOR_SYMBOL_X;
                 break;
             case (2) :
-                symbolForPrint = symbol0;
-                symbolColor = symbolColor0;
+                symbolForPrint = SYMBOL_O;
+                symbolColor = COLOR_SYMBOL_O;
                 break;
             default :
-                symbolForPrint = symbolSpace;
-                symbolColor = symbolColorSpace;
+                symbolForPrint = SYMBOL_SPACE;
+                symbolColor = COLOR_SYMBOL_SPACE;
         }
-        setCellValueEx(x, y, symbolColorSpace, symbolForPrint, symbolColor);
+        setCellValueEx(x, y, COLOR_SYMBOL_SPACE, symbolForPrint, symbolColor);
     }
 
     public void updateView() {
-        for (int x = 0; x < fieldSize; x++) {
-            for (int y = 0; y < fieldSize; y++) {
+        for (int x = 0; x < FIELD_SIZE; x++) {
+            for (int y = 0; y < FIELD_SIZE; y++) {
                 updateCellView(x, y, model[x][y]);
             }
         }
@@ -99,22 +103,19 @@ public class TicTacToeGame extends Game {
 
         if (checkWin(x, y, currentPlayer)) {
             isGameStopped = true;
-//            Color symbolColor = (currentPlayer == 1) ? symbolColorX : symbolColor0;
-//            showMessageDialog(Color.NONE, " Player #" + currentPlayer + " win!",
-//                    symbolColor, msgTextSize);
             if (currentPlayer == 1) {
-                showMessageDialog(Color.NONE, player1winMessage, symbolColorPlayer1Win,
-                        msgTextSize);
+                showMessageDialog(COLOR_MSG_BACKGROUND, MESSAGE_PLAYER_1_WIN, COLOR_MSG_PLAYER_1_WIN,
+                        MSG_TEXT_SIZE);
             } else {
-                showMessageDialog(Color.NONE, player1looseMessage, symbolColorPlayer1Loose,
-                        msgTextSize);
+                showMessageDialog(COLOR_MSG_BACKGROUND, MESSAGE_PLAYER_1_LOOSE, COLOR_MSG_PLAYER_1_LOOSE,
+                        MSG_TEXT_SIZE);
             }
             return;
         }
 
         if (!hasEmptyCell()) {
             isGameStopped = true;
-            showMessageDialog(Color.NONE, " Draw!",  Color.BLUE, msgTextSize);
+            showMessageDialog(COLOR_MSG_BACKGROUND, MESSAGE_DRAW, COLOR_MSG_DROW, MSG_TEXT_SIZE);
             return;
         }
     }
@@ -125,18 +126,18 @@ public class TicTacToeGame extends Game {
         boolean winMainDiagonal = true;
         boolean winSecondaryDiagonal = true;
 
-        for (int i = 0; i < fieldSize; i++) {
+        for (int i = 0; i < FIELD_SIZE; i++) {
             winX = winX && (model[i][y] == n);
             winY = winY && (model[x][i] == n);
             winMainDiagonal = winMainDiagonal && (model[i][i] == n);
-            winSecondaryDiagonal = winSecondaryDiagonal && (model[i][fieldSize - i - 1] == n);
+            winSecondaryDiagonal = winSecondaryDiagonal && (model[i][FIELD_SIZE - i - 1] == n);
         }
         return (winX || winY || winMainDiagonal || winSecondaryDiagonal) ;
     }
 
     public boolean hasEmptyCell()  {
-        for (int x = 0; x < fieldSize; x++) {
-            for (int y = 0; y < fieldSize; y++) {
+        for (int x = 0; x < FIELD_SIZE; x++) {
+            for (int y = 0; y < FIELD_SIZE; y++) {
                 if (model[x][y] == 0) {
                     return true;
                 };
@@ -146,22 +147,22 @@ public class TicTacToeGame extends Game {
     }
 
     public void onKeyPress(Key key) {
-        if ((key == restartGameKey) || (isGameStopped && (key == restartGameKeyIfGameStoped))) {
+        if ((key == KEY_RESTART_GAME) || (isGameStopped && (key == KEY_RESTART_GAME_IF_GAME_STOPED))) {
             startGame();
             updateView();
         }
     }
 
     public void computerTurn() {
-        int centralField = fieldSize / 2;
+        int centralField = FIELD_SIZE / 2;
         if (model[centralField][centralField] == 0) {
             setSignAndCheck(centralField, centralField);
             return;
         }
 
         // check win currentPlayer for one turn
-        for (int xi = 0; xi < fieldSize; xi++) {
-            for (int yi = 0; yi < fieldSize; yi++) {
+        for (int xi = 0; xi < FIELD_SIZE; xi++) {
+            for (int yi = 0; yi < FIELD_SIZE; yi++) {
                 if (checkFutureWin(xi, yi, currentPlayer) ) {
                     setSignAndCheck(xi, yi);
                     return;
@@ -170,8 +171,8 @@ public class TicTacToeGame extends Game {
         }
 
         // check win other player for one turn and d't allow it
-        for (int xi = 0; xi < fieldSize; xi++) {
-            for (int yi = 0; yi < fieldSize; yi++) {
+        for (int xi = 0; xi < FIELD_SIZE; xi++) {
+            for (int yi = 0; yi < FIELD_SIZE; yi++) {
                 if (checkFutureWin(xi, yi, 3 - currentPlayer) ) {
                     setSignAndCheck(xi, yi);
                     return;
@@ -179,15 +180,27 @@ public class TicTacToeGame extends Game {
             }
         }
 
-        // turn in first free field
-        for (int xi = 0; xi < fieldSize; xi++) {
-            for (int yi = 0; yi < fieldSize; yi++) {
-                if (model[xi][yi] == 0) {
-                    setSignAndCheck(xi, yi);
-                    return;
-                };
-            }
-        }
+        // turn in first free random field
+        Random random = new Random();
+        int xi;
+        int yi;
+        do {
+            xi = random.nextInt(FIELD_SIZE);
+            yi = random.nextInt(FIELD_SIZE);
+        } while ((model[xi][yi] != 0));
+        setSignAndCheck(xi, yi);
+        return;
+
+// turn in first free field
+//        for (int xi = 0; xi < fieldSize; xi++) {
+//            for (int yi = 0; yi < fieldSize; yi++) {
+//                if (model[xi][yi] == 0) {
+//                    setSignAndCheck(xi, yi);
+//                    return;
+//                };
+//            }
+//        }
+
     }
 
     public boolean checkFutureWin(int x, int y, int n) {
@@ -199,27 +212,5 @@ public class TicTacToeGame extends Game {
         model[x][y] = 0;
         return  futureWin;
 
-//        boolean winX = true;
-//        boolean winY = true;
-//        boolean winMainDiagonal = (x == y) ? true : false;
-//        boolean winSecondaryDiagonal = (x == (fieldSize - y - 1)) ? true : false;
-//
-//        for (int i = 0; i < fieldSize; i++) {
-//            if (i != x) {
-//                winX = winX && (model[i][y] == n) ;
-//            }
-//            if (i != y) {
-//                winY = winY && (model[x][i] == n);
-//            }
-//            // checking fields on main diagonal
-//            if (winMainDiagonal && (i != x)) {
-//                winMainDiagonal = winMainDiagonal && (model[i][i] == n);
-//            }
-//            // checking fields on Secondary diagonal
-//            if (winSecondaryDiagonal && (i != x)) {
-//                winSecondaryDiagonal = winSecondaryDiagonal && (model[i][fieldSize - i - 1] == n);
-//            }
-//        }
-//        return (winX || winY || winMainDiagonal || winSecondaryDiagonal) ;
     }
 }
