@@ -4,10 +4,11 @@ import com.javarush.engine.cell.*;
 
 import java.util.Random;
 
-/** Game TickTackToe (X-0) on site javarush.com.
-https://javarush.com/ua/projects/games/com.javarush.games.ticktacktoe
-Use engine of this site. D't work w/o site.
-*/
+/**
+ * Game TickTackToe (X-0) on site javarush.com.
+ * https://javarush.com/ua/projects/games/com.javarush.games.ticktacktoe
+ * Use engine of this site. Don't work without site.
+ */
 public class TicTacToeGame extends Game {
     private static final int FIELD_SIZE = 3;
 
@@ -15,9 +16,9 @@ public class TicTacToeGame extends Game {
     private static final String SYMBOL_X = "X";
     private static final String SYMBOL_O = "O";
 
-    private static final Color COLOR_SYMBOL_SPACE = Color.WHITE;
-    private static final Color COLOR_SYMBOL_X = Color.RED;
-    private static final Color COLOR_SYMBOL_O = Color.BLUE;
+    private static final Color COLOR_CELL_BACKGROUND = Color.WHITE;
+    private static final Color COLOR_SYMBOL_X = Color.GREEN;
+    private static final Color COLOR_SYMBOL_O = Color.RED;
     private static final Color COLOR_MSG_PLAYER_1_WIN = Color.GREEN;
     private static final Color COLOR_MSG_PLAYER_1_LOOSE = Color.RED;
     private static final Color COLOR_MSG_DROW = Color.BLUE;
@@ -26,8 +27,8 @@ public class TicTacToeGame extends Game {
     private static final String MESSAGE_PLAYER_1_WIN = "You Win!";
     private static final String MESSAGE_PLAYER_1_LOOSE = "Game Over";
     private static final String MESSAGE_DRAW = "Draw!";
-
     private static final int MSG_TEXT_SIZE = 55;
+
     private static final Key KEY_RESTART_GAME = Key.ESCAPE;
     private static final Key KEY_RESTART_GAME_IF_GAME_STOPED = Key.SPACE;
 
@@ -65,9 +66,9 @@ public class TicTacToeGame extends Game {
                 break;
             default :
                 symbolForPrint = SYMBOL_SPACE;
-                symbolColor = COLOR_SYMBOL_SPACE;
+                symbolColor = COLOR_CELL_BACKGROUND;
         }
-        setCellValueEx(x, y, COLOR_SYMBOL_SPACE, symbolForPrint, symbolColor);
+        setCellValueEx(x, y, COLOR_CELL_BACKGROUND, symbolForPrint, symbolColor);
     }
 
     public void updateView() {
@@ -180,7 +181,7 @@ public class TicTacToeGame extends Game {
             }
         }
 
-        // turn in first free random field
+        // turn in first random free field
         Random random = new Random();
         int xi;
         int yi;
